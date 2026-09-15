@@ -10,6 +10,8 @@ import { SearchForm } from "../components/SearchForm";
 export function HomePage() {
   const [question, setQuestion] = useState("");
   const [searchDraft, setSearchDraft] = useState("");
+  const [testament, setTestament] = useState("");
+  const [book, setBook] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,14 +31,17 @@ export function HomePage() {
     setResult(null);
 
     try {
-      const data = await queryBible(normalizedQuestion);
+      const data = await queryBible(normalizedQuestion, {
+        testament: testament || undefined,
+        book: book || undefined,
+      });
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al consultar");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [testament, book]);
 
   return (
     <main className="page">
@@ -51,6 +56,10 @@ export function HomePage() {
       <SearchForm
         value={searchDraft}
         onChange={setSearchDraft}
+        testament={testament}
+        book={book}
+        onTestamentChange={setTestament}
+        onBookChange={setBook}
         loading={loading}
         error={error}
         onSubmit={handleSubmit}
