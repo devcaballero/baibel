@@ -53,6 +53,20 @@ class RagService:
                 f"Chroma collection '{COLLECTION_NAME}' is not available",
             )
 
+    def retrieve(
+        self,
+        question: str,
+        num_results: int = 5,
+        testament: str | None = None,
+        book: str | None = None,
+        hybrid: bool = True,
+    ) -> list[BiblicalChunk]:
+        if hybrid:
+            return self._hybrid_search(question, num_results, testament, book)
+        return self._vector_store.search(
+            question, n_results=num_results, testament=testament, book=book
+        )
+
     def query(
         self,
         question: str,
@@ -61,20 +75,7 @@ class RagService:
         book: str | None = None,
         hybrid: bool = True,
     ) -> QueryResult:
-        if hybrid:
-            chunks = self._hybrid_search(
-                question,
-                num_results=num_results,
-                testament=testament,
-                book=book,
-            )
-        else:
-            chunks = self._vector_store.search(
-                question,
-                n_results=num_results,
-                testament=testament,
-                book=book,
-            )
+        chunks = self.retrieve(question, num_results, testament, book, hybrid)
         answer = self._generator.generate(question, chunks)
         return QueryResult(answer=answer, chunks=chunks)
 

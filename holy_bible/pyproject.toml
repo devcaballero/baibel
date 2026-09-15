@@ -24,6 +24,7 @@ dependencies = [
 holy-bible-chunker = "holy_bible.etl.cli.chunker:main"
 holy-bible-cargar-chroma = "holy_bible.etl.cli.cargar_chroma:main"
 holy-bible-consultar = "holy_bible.rag.cli.consultar:main"
+holy-bible-eval-recall = "holy_bible.eval.recall_at_k:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
