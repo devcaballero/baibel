@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import json
+import sys
+from pathlib import Path
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -11,6 +13,9 @@ from fastapi.testclient import TestClient
 from holy_bible.rag.domain.exceptions import RagGenerationError
 from holy_bible.shared.settings import LIBROS, PROJECT_ROOT
 from holy_bible.rag.api.app import app
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from test_ranking import test_reciprocal_rank_fusion_promotes_overlap
 
 NT_BOOKS = {libro["nombre"] for libro in LIBROS if libro["testamento"] == "NT"}
 MISSING_CHROMA_DIR = PROJECT_ROOT / "chroma_biblia_missing_for_test"
@@ -69,6 +74,35 @@ def test_testament_filter(client: TestClient) -> None:
     assert data["citations"], "Expected citations"
     assert all(c["book"] in NT_BOOKS for c in data["citations"]), data["citations"]
     print("\n=== testament filter (NT) ===\nOK: todas las citations son del NT")
+
+
+def test_hybrid_default_true(client: TestClient) -> None:
+    response = client.post(
+        "/query",
+        json={"question": "¿Qué dice sobre el perdón?", "num_results": 5},
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert "answer" in data
+    assert data["citations"], "Expected citations"
+    print("\n=== hybrid default true ===\nOK: 200 con citations")
+
+
+def test_hybrid_false_matches_current_behavior(client: TestClient) -> None:
+    response = client.post(
+        "/query",
+        json={
+            "question": "¿Qué dice sobre la sabiduría?",
+            "num_results": 5,
+            "book": "Eclesiástico",
+            "hybrid": False,
+        },
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["citations"], "Expected citations"
+    assert all(c["book"] == "Eclesiástico" for c in data["citations"]), data["citations"]
+    print("\n=== hybrid false book filter ===\nOK: todas las citations son de Eclesiástico")
 
 
 def test_off_topic(client: TestClient) -> None:
@@ -157,8 +191,11 @@ def main() -> None:
     test_docs(client)
     test_empty_question_400(client)
     test_missing_question_422(client)
+    test_reciprocal_rank_fusion_promotes_overlap()
     test_book_filter(client)
     test_testament_filter(client)
+    test_hybrid_default_true(client)
+    test_hybrid_false_matches_current_behavior(client)
     test_off_topic(client)
     test_missing_chroma(client_factory)
     test_anthropic_rate_limit(client_factory)

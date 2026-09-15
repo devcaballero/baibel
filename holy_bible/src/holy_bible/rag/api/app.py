@@ -88,6 +88,7 @@ def query(body: QueryRequest) -> QueryResponse:
             num_results=body.num_results,
             testament=body.testament,
             book=body.book,
+            hybrid=body.hybrid,
         )
     except ChromaUnavailableError as exc:
         service.vector_store.reset_cache()

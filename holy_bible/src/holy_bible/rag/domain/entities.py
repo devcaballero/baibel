@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 @dataclass
 class BiblicalChunk:
+    id: str
     text: str
     book: str
     chapter: int

@@ -78,8 +78,12 @@ class ChromaVectorStore:
             raise RagSearchError("Error searching biblical context") from exc
 
         chunks: list[BiblicalChunk] = []
-        for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
-            chunks.append(self._chunk_from_metadata(doc, meta))
+        for chunk_id, doc, meta in zip(
+            results["ids"][0],
+            results["documents"][0],
+            results["metadatas"][0],
+        ):
+            chunks.append(self._chunk_from_metadata(doc, meta, chunk_id))
         return chunks
 
     @staticmethod
@@ -105,8 +109,11 @@ class ChromaVectorStore:
         return "bibliatodo"
 
     @classmethod
-    def _chunk_from_metadata(cls, text: str, meta: dict) -> BiblicalChunk:
+    def _chunk_from_metadata(
+        cls, text: str, meta: dict, chunk_id: str
+    ) -> BiblicalChunk:
         return BiblicalChunk(
+            id=chunk_id,
             text=text,
             book=meta["libro"],
             chapter=int(meta["capitulo"]),
