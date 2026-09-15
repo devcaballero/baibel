@@ -1,0 +1,74 @@
+{
+  "_meta": {
+    "descripcion": "Delimitación de los 9 libros/secciones deuterocanónicos en los OCR de Torres Amat (Archive.org). Rangos inspeccionados manualmente con sed/read; pendiente confirmación del usuario antes de extracción/LLM.",
+    "archivos": {
+      "T2": "tomo2_y_tomo3/La Sagrada Biblia T2.txt",
+      "T3": "tomo2_y_tomo3/La Sagrada Biblia T3.txt"
+    },
+    "convenciones": {
+      "linea_inicio_intro": "Primera línea del título/advertencia editorial de Torres Amat (no versículos).",
+      "linea_inicio_texto": "Primera línea del primer CAPITULO bíblico (título de capítulo o v.1).",
+      "linea_fin": "Última línea incluida del texto bíblico; la línea linea_fin+1 inicia el siguiente libro o material editorial."
+    }
+  },
+  "tobias": {
+    "archivo": "T2",
+    "linea_inicio_intro": 30979,
+    "linea_inicio_texto": 31020,
+    "linea_fin": 32611
+  },
+  "judit": {
+    "archivo": "T2",
+    "linea_inicio_intro": 32612,
+    "linea_inicio_texto": 32652,
+    "linea_fin": 34606
+  },
+  "ester": {
+    "archivo": "T2",
+    "linea_inicio_intro": null,
+    "linea_inicio_texto": 35862,
+    "linea_fin": 36492,
+    "solo_capitulos": "XI-XVI",
+    "notas": "Caps I-X ya en output/ester.json (bibliatodo). En 35786 hay un CAPITULO X duplicado (v.1-3 = fin hebreo) ya cubierto; las adiciones Vulgata empiezan en CAPITULO XI (35862). Numeración Torres Amat: XI=sueño, XII=Mordecai, XIII=edicto, XIV=Amán, XV=oración, XVI=carta de Artajerjes."
+  },
+  "sabiduria": {
+    "archivo": "T3",
+    "linea_inicio_intro": 18595,
+    "linea_inicio_texto": 18625,
+    "linea_fin": 21261
+  },
+  "eclesiastico": {
+    "archivo": "T3",
+    "linea_inicio_intro": 21263,
+    "linea_inicio_texto": 21337,
+    "linea_fin": 29506,
+    "notas": "Entre intro y texto hay un prólogo del traductor (21306-21335) que debe excluirse del raw bíblico. Último capítulo: LI (oración final, v.38 termina ~29494)."
+  },
+  "baruc": {
+    "archivo": "T3",
+    "linea_inicio_intro": 49579,
+    "linea_inicio_texto": 49602,
+    "linea_fin": 50803,
+    "notas": "Incluye caps I-V de Baruc + cap VI (Carta de Jeremías, desde 50398). Siguiente sección: LA PROFECIA DE EZECHIEL (50804)."
+  },
+  "daniel_13_14": {
+    "archivo": "T3",
+    "linea_inicio_intro": 61587,
+    "linea_inicio_texto": 61593,
+    "linea_fin": 62107,
+    "solo_capitulos": "XIII-XIV",
+    "notas": "Caps I-XII ya en output/daniel.json (bibliatodo). Bloque completo de Daniel en T3 empieza ~58845; solo extraer apéndices Theodoción: XIII=Susana (61593), XIV=Bel y el Dragón (61919, OCR 'XIY'). Último v.42 ~62096. linea_fin+1=62109 inicia advertencia sobre profetas menores."
+  },
+  "1macabeos": {
+    "archivo": "T3",
+    "linea_inicio_intro": 70364,
+    "linea_inicio_texto": 70428,
+    "linea_fin": 75372
+  },
+  "2macabeos": {
+    "archivo": "T3",
+    "linea_inicio_intro": 75377,
+    "linea_inicio_texto": 75382,
+    "linea_fin": 78970
+  }
+}

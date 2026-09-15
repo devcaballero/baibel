@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "descripcion": "Delimitación de los 9 libros/secciones deuterocanónicos en la edición Torres Amat 1874 (Archive.org, volumen único AT). Rangos inspeccionados manualmente con sed/rg/read; pendiente confirmación del usuario antes de extracción/LLM.",
+    "archivos": {
+      "AT1874": "antiguo testamento/labiblia_torres_amat_antiguo_testamento.txt"
+    },
+    "convenciones": {
+      "linea_inicio_intro": "Primera línea del título/advertencia editorial de Torres Amat (no versículos).",
+      "linea_inicio_texto": "Primera línea del primer CAPITULO bíblico (título de capítulo o v.1).",
+      "linea_fin": "Última línea incluida del texto bíblico; la línea linea_fin+1 inicia el siguiente libro o material editorial."
+    }
+  },
+  "tobias": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 84557,
+    "linea_inicio_texto": 84613,
+    "linea_fin": 86357,
+    "notas": "Intro en 84557 (LIBRO DE TOBÍAS + ADVERTENCIA). Texto desde CAPÍTULO PRIMERO (84613). Último capítulo XIV; v.17 termina ~86357. Líneas 86359-86376 son notas editoriales antes de Judit."
+  },
+  "judit": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 86378,
+    "linea_inicio_texto": 86439,
+    "linea_fin": 88652,
+    "notas": "Intro en 86378. CAPITULO II en 86436 es ruido OCR previo al CAPÍTULO PRIMERO real (86439). Confirmados 16 capítulos incluyendo XV (88368) y XVI (88527). v.31 de cap. XVI termina ~88652."
+  },
+  "ester": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": null,
+    "linea_inicio_texto": 90132,
+    "linea_fin": 90806,
+    "solo_capitulos": "XI-XVI",
+    "notas": "Caps I-X ya en output/ester.json (bibliatodo). Adiciones Vulgata desde CAPÍTULO XI (90132), precedido por nota editorial ~90146 ('ESTE ERA EL PRINCIPIO...'). Caps XII-XVI en 90201/90217, 90261, 90396, 90483/90532, 90639. Último v.24 de cap. XVI ~90806. linea_fin+1=90808 nota editorial; 90815 inicia Job."
+  },
+  "sabiduria": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 118961,
+    "linea_inicio_texto": 118999,
+    "linea_fin": 122043,
+    "notas": "Intro en 118961 (LIBRO DE LA SABIDURÍA + ADVERTENCIA). CAPITULO PRIMERO en 118999 (OCR fusiona título con v.3). 19 capítulos (I-XIX). Último v.20 de cap. XIX ~122043. linea_fin+1=122051 inicia Eclesiástico (no confundir con Eclesiastés ~115849)."
+  },
+  "eclesiastico": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 122051,
+    "linea_inicio_prologo": 122093,
+    "linea_fin_prologo": 122139,
+    "linea_inicio_texto": 122142,
+    "linea_fin": 131439,
+    "notas": "Intro en 122051 (LIBRO DEL ECLESIÁSTICO + ADVERTENCIA). Prólogo del traductor griego en 122093-122139 (excluir del raw bíblico). Texto desde CAPÍTULO PRIMERO (122142). 51 capítulos confirmados (I-LI). Oración final cap. LI v.38 termina ~131439. linea_fin+1=131441 nota; 131455 inicia ADVERTENCIA SOBRE LOS PROFETAS."
+  },
+  "baruc": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 154796,
+    "linea_inicio_texto": 154823,
+    "linea_fin": 156160,
+    "notas": "Intro en 154796 (LA PROFECÍA DE BARUC + ADVERTENCIA). Caps I-V de Baruc + cap. VI (Carta de Jeremías, desde 155717). Último v.72 de cap. VI ~156160. linea_fin+1=156168 inicia Ezequiel."
+  },
+  "daniel_13_14": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 168749,
+    "linea_inicio_texto": 168756,
+    "linea_fin": 169395,
+    "solo_capitulos": "XIII-XIV",
+    "notas": "Caps I-XII ya en output/daniel.json (bibliatodo). Nota de S. Jerónimo sobre texto hebreo vs Teodoción en 168749-168753. XIII=Susana (168756), XIV=Bel y el Dragón (169121). Último v.42 de cap. XIV ~169395. linea_fin+1=169401 inicia ADVERTENCIA GENERAL sobre profetas menores."
+  },
+  "1macabeos": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 179095,
+    "linea_inicio_texto": 179235,
+    "linea_fin": 184895,
+    "notas": "Advertencia compartida Macabeos en 179095-179186. TABLA CRONOLÓGICA editorial 179188-179230 (excluir). CAPÍTULO PRIMERO en 179235. 16 capítulos. Cierre del libro I en v.24 ~184895. linea_fin+1=184897 inicia 2 Macabeos."
+  },
+  "2macabeos": {
+    "archivo": "AT1874",
+    "linea_inicio_intro": 184897,
+    "linea_inicio_texto": 184901,
+    "linea_fin": 189003,
+    "notas": "Header LIBRO SEGUNDO en 184897; CAPÍTULO PRIMERO en 184901. 15 capítulos (canon católico). Último cap. XV; epílogo del autor v.38-40 y 'Y con esto doy fin.' ~189003. linea_fin+1=189012 inicia índice final del tomo."
+  }
+}
