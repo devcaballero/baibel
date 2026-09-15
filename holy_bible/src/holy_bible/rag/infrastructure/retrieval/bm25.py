@@ -10,10 +10,69 @@ from holy_bible.etl.chunking import CHUNKS_FILE
 from holy_bible.rag.domain.entities import BiblicalChunk
 
 _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
+_STOPWORDS_ES = {
+    "el",
+    "la",
+    "los",
+    "las",
+    "un",
+    "una",
+    "unos",
+    "unas",
+    "de",
+    "del",
+    "en",
+    "que",
+    "y",
+    "a",
+    "su",
+    "sus",
+    "como",
+    "es",
+    "por",
+    "con",
+    "se",
+    "lo",
+    "al",
+    "o",
+    "pero",
+    "qué",
+    "quién",
+    "cómo",
+    "cuál",
+    "cuáles",
+    "para",
+    "no",
+    "ni",
+    "le",
+    "les",
+    "me",
+    "te",
+    "nos",
+    "más",
+    "muy",
+    "ya",
+    "si",
+    "porque",
+    "cuando",
+    "donde",
+    "era",
+    "fue",
+    "son",
+    "ser",
+    "hay",
+    "este",
+    "esta",
+    "eso",
+    "esa",
+}
 
 
-def _tokenize(text: str) -> list[str]:
-    return _TOKEN_RE.findall(text.lower())
+def _tokenize(text: str, filter_stopwords: bool = False) -> list[str]:
+    tokens = _TOKEN_RE.findall(text.lower())
+    if not filter_stopwords:
+        return tokens
+    return [token for token in tokens if token not in _STOPWORDS_ES]
 
 
 class BM25Retriever:
@@ -31,6 +90,23 @@ class BM25Retriever:
         testament: str | None = None,
         book: str | None = None,
     ) -> list[BiblicalChunk]:
+        return [
+            chunk
+            for chunk, _ in self.search_with_scores(
+                question,
+                n_results=n_results,
+                testament=testament,
+                book=book,
+            )
+        ]
+
+    def search_with_scores(
+        self,
+        question: str,
+        n_results: int = 5,
+        testament: str | None = None,
+        book: str | None = None,
+    ) -> list[tuple[BiblicalChunk, float]]:
         self._ensure_index()
         if self._unavailable or self._bm25 is None:
             return []
@@ -40,7 +116,7 @@ class BM25Retriever:
             return []
 
         scores = self._bm25.get_scores(tokens)
-        ranked: list[tuple[float, BiblicalChunk]] = []
+        ranked: list[tuple[BiblicalChunk, float]] = []
         for score, chunk in zip(scores, self._chunks):
             if score <= 0:
                 continue
@@ -48,10 +124,18 @@ class BM25Retriever:
                 continue
             if book and chunk.book != book:
                 continue
-            ranked.append((float(score), chunk))
+            ranked.append((chunk, float(score)))
 
-        ranked.sort(key=lambda item: item[0], reverse=True)
-        return [chunk for _, chunk in ranked[:n_results]]
+        ranked.sort(key=lambda item: item[1], reverse=True)
+        return ranked[:n_results]
+
+    def max_question_idf(self, question: str) -> float:
+        self._ensure_index()
+        if self._unavailable or self._bm25 is None:
+            return 0.0
+        tokens = _tokenize(question, filter_stopwords=True)
+        idfs = [float(self._bm25.idf.get(token, 0.0)) for token in tokens]
+        return max(idfs) if idfs else 0.0
 
     def _ensure_index(self) -> None:
         if self._loaded:

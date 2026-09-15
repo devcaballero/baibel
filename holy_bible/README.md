@@ -25,6 +25,7 @@ Comparten datos (`chroma_biblia/`, metadata) y config (`shared/settings.py`), pe
 - API REST FastAPI con `/health` y `/query`
 - Búsqueda semántica + generación con Claude (`claude-haiku-4-5-20251001`)
 - Respuestas basadas solo en pasajes recuperados, con citas
+- Retrieval default **dense-only** (`hybrid=false`). BM25 + RRF 50/50 existe (`hybrid=true`) pero bajó recall@k en preguntas genéricas (tokenizer plano, IDF/score de BM25 no separan términos raros de palabras comunes). Medición: `python -m holy_bible.eval.recall_at_k`, `threshold_sweep`, `idf_sweep`.
 
 ## Requisitos
 
@@ -113,6 +114,7 @@ Documentación interactiva: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/d
 | `num_results` | int | no | Chunks a recuperar (default 5, max 20) |
 | `testament` | `"AT"` \| `"NT"` | no | Filtrar por testamento |
 | `book` | string | no | Nombre exacto del libro (ej. `"Eclesiástico"`) |
+| `hybrid` | bool | no | Fusionar BM25 + dense con RRF (default `false`; ver nota en RAG) |
 
 **Response:**
 

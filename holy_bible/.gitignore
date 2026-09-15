@@ -23,3 +23,6 @@ state.json
 
 # OS
 .DS_Store
+
+# Disposable local debug
+debug_case.py

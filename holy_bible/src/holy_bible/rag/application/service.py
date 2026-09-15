@@ -61,6 +61,10 @@ class RagService:
         book: str | None = None,
         hybrid: bool = False,
     ) -> list[BiblicalChunk]:
+        # Default dense-only: RRF 50/50 with BM25 (plain tokenizer) dropped
+        # recall@k on generic questions. See eval/last_run.md, threshold_sweep,
+        # and idf_sweep — top BM25 score and max IDF did not isolate rare terms.
+        # Pass hybrid=True to force fusion while debugging.
         if hybrid:
             return self._hybrid_search(question, num_results, testament, book)
         return self._vector_store.search(
@@ -86,6 +90,8 @@ class RagService:
         testament: str | None,
         book: str | None,
     ) -> list[BiblicalChunk]:
+        # Equal-weight RRF: BM25 noise on generic queries can demote a good
+        # dense hit (e.g. 1 Cor 13). Kept for explicit hybrid=True, not default.
         search_kwargs = {
             "n_results": RETRIEVAL_POOL_SIZE,
             "testament": testament,
