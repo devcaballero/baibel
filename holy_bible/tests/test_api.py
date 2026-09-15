@@ -76,7 +76,7 @@ def test_testament_filter(client: TestClient) -> None:
     print("\n=== testament filter (NT) ===\nOK: todas las citations son del NT")
 
 
-def test_hybrid_default_true(client: TestClient) -> None:
+def test_default_is_dense_only(client: TestClient) -> None:
     response = client.post(
         "/query",
         json={"question": "¿Qué dice sobre el perdón?", "num_results": 5},
@@ -85,7 +85,23 @@ def test_hybrid_default_true(client: TestClient) -> None:
     data = response.json()
     assert "answer" in data
     assert data["citations"], "Expected citations"
-    print("\n=== hybrid default true ===\nOK: 200 con citations")
+    print("\n=== default dense-only ===\nOK: 200 con citations sin enviar hybrid")
+
+
+def test_hybrid_true_when_requested(client: TestClient) -> None:
+    response = client.post(
+        "/query",
+        json={
+            "question": "¿Qué dice sobre el perdón?",
+            "num_results": 5,
+            "hybrid": True,
+        },
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert "answer" in data
+    assert data["citations"], "Expected citations"
+    print("\n=== hybrid true explicit ===\nOK: 200 con citations")
 
 
 def test_hybrid_false_matches_current_behavior(client: TestClient) -> None:
@@ -194,7 +210,8 @@ def main() -> None:
     test_reciprocal_rank_fusion_promotes_overlap()
     test_book_filter(client)
     test_testament_filter(client)
-    test_hybrid_default_true(client)
+    test_default_is_dense_only(client)
+    test_hybrid_true_when_requested(client)
     test_hybrid_false_matches_current_behavior(client)
     test_off_topic(client)
     test_missing_chroma(client_factory)

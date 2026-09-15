@@ -59,7 +59,7 @@ class RagService:
         num_results: int = 5,
         testament: str | None = None,
         book: str | None = None,
-        hybrid: bool = True,
+        hybrid: bool = False,
     ) -> list[BiblicalChunk]:
         if hybrid:
             return self._hybrid_search(question, num_results, testament, book)
@@ -73,7 +73,7 @@ class RagService:
         num_results: int = 5,
         testament: str | None = None,
         book: str | None = None,
-        hybrid: bool = True,
+        hybrid: bool = False,
     ) -> QueryResult:
         chunks = self.retrieve(question, num_results, testament, book, hybrid)
         answer = self._generator.generate(question, chunks)

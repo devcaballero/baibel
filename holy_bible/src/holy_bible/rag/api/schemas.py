@@ -12,7 +12,7 @@ class QueryRequest(BaseModel):
     num_results: int = Field(default=DEFAULT_N_RESULTS, ge=1, le=MAX_N_RESULTS)
     testament: Literal["AT", "NT"] | None = None
     book: str | None = None
-    hybrid: bool = True
+    hybrid: bool = False
 
     @field_validator("question")
     @classmethod
