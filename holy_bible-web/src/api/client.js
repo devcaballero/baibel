@@ -25,14 +25,22 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 /**
  * @param {string} question
- * @param {{ numResults?: number }} [options]
+ * @param {{ numResults?: number; testament?: string | null; book?: string | null }} [options]
  * @returns {Promise<QueryResponse>}
  */
-export async function queryBible(question, { numResults = 5 } = {}) {
+export async function queryBible(
+  question,
+  { numResults = 5, testament, book } = {},
+) {
+  /** @type {{ question: string; num_results: number; testament?: string; book?: string }} */
+  const payload = { question, num_results: numResults };
+  if (testament) payload.testament = testament;
+  if (book) payload.book = book;
+
   const response = await fetch(`${API_URL}/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, num_results: numResults }),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
