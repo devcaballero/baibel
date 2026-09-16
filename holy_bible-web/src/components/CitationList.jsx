@@ -7,7 +7,7 @@ export function CitationList({ citations }) {
   if (!citations.length) return null;
 
   const label =
-    citations.length === 1 ? "1 pasaje citado" : `${citations.length} pasajes citados`;
+    citations.length === 1 ? "1 pasaje consultado" : `${citations.length} pasajes consultados`;
 
   return (
     <section className="citations">

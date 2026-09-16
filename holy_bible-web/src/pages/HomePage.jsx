@@ -32,16 +32,26 @@ export function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [apiStatus, setApiStatus] = useState(null);
+  const [lastAttemptedQuestion, setLastAttemptedQuestion] = useState("");
 
-  useEffect(() => {
+  const retryHealthCheck = useCallback(() => {
     getHealth()
-      .then((health) => setApiStatus(health))
+      .then((health) => {
+        setApiStatus(health);
+        setError(null);
+      })
       .catch(() => setApiStatus({ status: "error", detail: "API no disponible" }));
   }, []);
 
+  useEffect(() => {
+    retryHealthCheck();
+  }, [retryHealthCheck]);
+
   const handleSubmit = useCallback(async (nextQuestion) => {
+    if (apiStatus?.status === "error") return;
     const normalizedQuestion = ensureBibliaCatolica(nextQuestion);
     setQuestion(normalizedQuestion);
+    setLastAttemptedQuestion(normalizedQuestion);
     setLoading(true);
     setError(null);
     setResult(null);
@@ -61,7 +71,15 @@ export function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [testament, book]);
+  }, [apiStatus?.status, testament, book]);
+
+  const handleRetryQuery = useCallback(() => {
+    if (!lastAttemptedQuestion || apiStatus?.status === "error") return;
+    handleSubmit(lastAttemptedQuestion);
+  }, [apiStatus?.status, handleSubmit, lastAttemptedQuestion]);
+
+  const apiUnavailable = apiStatus?.status === "error";
+  const formError = apiUnavailable ? null : error;
 
   const resultScope = result
     ? searchScopeLabel(result.appliedTestament, result.appliedBook)
@@ -72,9 +90,6 @@ export function HomePage() {
       <header className="page-header">
         <img src="/logo.png" alt="" className="page-logo" width={96} height={96} />
         <h1 className="page-title">Baibel</h1>
-        {apiStatus?.status === "error" && (
-          <p className="page-subtitle page-subtitle-error">{apiStatus.detail ?? "API no disponible"}</p>
-        )}
       </header>
 
       <SearchForm
@@ -85,8 +100,12 @@ export function HomePage() {
         onTestamentChange={setTestament}
         onBookChange={setBook}
         loading={loading}
-        error={error}
+        apiUnavailable={apiUnavailable}
+        error={formError}
         onSubmit={handleSubmit}
+        onRetryHealthCheck={retryHealthCheck}
+        onRetryQuery={handleRetryQuery}
+        canRetryQuery={Boolean(lastAttemptedQuestion)}
       />
 
       {loading && <LoadingIndicator />}

@@ -34,6 +34,11 @@ export function IconDefs() {
         <g id="icn-facebook">
           <path d="M14 21v-7h2.5l.5-3H14V9c0-.9.2-1.5 1.5-1.5H17V4.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.8 1.3-3.8 3.8V11H8.5v3H11v7h3z" />
         </g>
+        <g id="icn-alert">
+          <path d="M12 3.2L2.6 19.4a1 1 0 0 0 .87 1.5h17.06a1 1 0 0 0 .87-1.5L12 3.2z" />
+          <line x1="12" y1="9" x2="12" y2="13.5" />
+          <circle cx="12" cy="16.6" r="0.9" />
+        </g>
       </defs>
     </svg>
   );

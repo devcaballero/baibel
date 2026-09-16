@@ -131,6 +131,49 @@ svg.icon use[href="#icn-facebook"] {
 
 .page-subtitle-error {
   color: var(--danger);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+}
+
+.page-error-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  margin-top: 0.75rem;
+}
+
+.page-error-banner .page-subtitle {
+  margin: 0;
+}
+
+.icon-error {
+  color: var(--danger);
+  margin-top: 1px;
+}
+
+.retry-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--gold-muted);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: var(--gold-bg);
+  border-color: var(--gold);
+}
+
+.retry-btn:active {
+  transform: scale(0.98);
 }
 
 /* Search */
@@ -243,8 +286,19 @@ svg.icon use[href="#icn-facebook"] {
   opacity: 0.6;
 }
 
-.search-error {
+.search-error-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
   margin: 0.75rem 0 0;
+}
+
+.search-error {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   font-size: 14px;
   color: var(--danger);
 }

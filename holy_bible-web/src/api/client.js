@@ -1,5 +1,24 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
+const NETWORK_ERROR_MESSAGE =
+  "No pudimos conectarnos con Baibel. Revisá tu conexión e intentá de nuevo.";
+
+/**
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @returns {Promise<Response>}
+ */
+async function fetchOrNetworkError(url, options) {
+  try {
+    return await fetch(url, options);
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error(NETWORK_ERROR_MESSAGE);
+    }
+    throw err;
+  }
+}
+
 /**
  * @typedef {Object} Citation
  * @property {string} book
@@ -37,7 +56,7 @@ export async function queryBible(
   if (testament) payload.testament = testament;
   if (book) payload.book = book;
 
-  const response = await fetch(`${API_URL}/query`, {
+  const response = await fetchOrNetworkError(`${API_URL}/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -59,7 +78,7 @@ export async function queryBible(
 
 /** @returns {Promise<HealthResponse>} */
 export async function getHealth() {
-  const response = await fetch(`${API_URL}/health`);
+  const response = await fetchOrNetworkError(`${API_URL}/health`);
   if (!response.ok) {
     throw new Error(`Health check failed (${response.status})`);
   }
