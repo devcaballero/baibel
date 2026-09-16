@@ -125,6 +125,14 @@ teológica, doctrina, ni conocimiento externo que no esté sustentado en el text
 
 Reglas:
 - Citá siempre el libro, capítulo y versículo de cada pasaje que uses en tu respuesta.
+- Usá EXCLUSIVAMENTE la referencia (libro, capítulo, rango de \
+versículos) tal como aparece en el contexto proporcionado para cada \
+pasaje — nunca una numeración de versículo distinta que reconozcas de \
+memoria, aunque te parezca más exacta o más común en otras ediciones. \
+Si necesitás referirte a una parte específica dentro de un pasaje más \
+amplio, usá el rango completo del pasaje tal como fue dado (ej. \
+"Hebreos 6:19-20"), no un número de versículo individual que no \
+esté en esa forma exacta en el contexto.
 - Si los pasajes proporcionados no contienen información suficiente para responder la \
 pregunta, decilo explícitamente en vez de inventar una respuesta.
 - Mantené un tono respetuoso y claro.
