@@ -80,8 +80,15 @@ class RagService:
         hybrid: bool = False,
     ) -> QueryResult:
         chunks = self.retrieve(question, num_results, testament, book, hybrid)
-        answer = self._generator.generate(question, chunks)
-        return QueryResult(answer=answer, chunks=chunks)
+        answer, cited_indices = self._generator.generate(question, chunks)
+        cited_chunks = [
+            chunks[index - 1]
+            for index in cited_indices
+            if 0 < index <= len(chunks)
+        ]
+        if not cited_chunks and chunks:
+            cited_chunks = chunks
+        return QueryResult(answer=answer, chunks=cited_chunks)
 
     def _hybrid_search(
         self,

@@ -8,6 +8,43 @@ from holy_bible.rag.domain.entities import BiblicalChunk
 from holy_bible.rag.domain.exceptions import RagGenerationError
 from holy_bible.shared.settings import CLAUDE_MODEL, SYSTEM_PROMPT
 
+SUBMIT_ANSWER_TOOL: dict[str, Any] = {
+    "name": "submit_answer",
+    "description": (
+        "Enviá la respuesta final junto con los índices de los pasajes "
+        "que efectivamente usaste para construirla."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "answer": {
+                "type": "string",
+                "description": (
+                    "La respuesta completa a la pregunta, en el mismo formato y tono "
+                    "que ya se usa (prosa + citas de libro/capítulo/versículo tal "
+                    "como aparecen en el contexto)."
+                ),
+            },
+            "cited_indices": {
+                "type": "array",
+                "items": {"type": "integer"},
+                "description": (
+                    "Los números [N] de los pasajes de contexto que fueron "
+                    "efectivamente usados para construir la respuesta. Si un pasaje "
+                    "no aportó nada a la respuesta, no lo incluyas aunque haya "
+                    "estado en el contexto."
+                ),
+            },
+        },
+        "required": ["answer", "cited_indices"],
+    },
+}
+
+EMPTY_CONTEXT_ANSWER = (
+    "No se encontró contexto bíblico suficiente para responder esta pregunta "
+    "con los pasajes recuperados."
+)
+
 
 class AnthropicGenerator:
     def __init__(self) -> None:
@@ -18,12 +55,11 @@ class AnthropicGenerator:
             self._client = anthropic.Anthropic()
         return self._client
 
-    def generate(self, question: str, chunks: list[BiblicalChunk]) -> str:
+    def generate(
+        self, question: str, chunks: list[BiblicalChunk]
+    ) -> tuple[str, list[int]]:
         if not chunks:
-            return (
-                "No se encontró contexto bíblico suficiente para responder esta pregunta "
-                "con los pasajes recuperados."
-            )
+            return (EMPTY_CONTEXT_ANSWER, [])
 
         context = self._format_context(chunks)
         user_message = (
@@ -41,6 +77,8 @@ class AnthropicGenerator:
                 max_tokens=1024,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": user_message}],
+                tools=[SUBMIT_ANSWER_TOOL],
+                tool_choice={"type": "tool", "name": "submit_answer"},
             )
         except anthropic.RateLimitError as exc:
             raise RagGenerationError(
@@ -59,7 +97,38 @@ class AnthropicGenerator:
                 "Unexpected error generating response"
             ) from exc
 
-        return response.content[0].text
+        return self._extract_tool_answer(response)
+
+    @staticmethod
+    def _extract_tool_answer(response: Any) -> tuple[str, list[int]]:
+        for block in getattr(response, "content", []) or []:
+            if getattr(block, "type", None) != "tool_use":
+                continue
+            payload = getattr(block, "input", None)
+            if not isinstance(payload, dict):
+                break
+            answer = payload.get("answer")
+            indices = payload.get("cited_indices")
+            if not isinstance(answer, str) or not answer.strip():
+                raise RagGenerationError(
+                    "Language model tool response did not include an answer"
+                )
+            if not isinstance(indices, list):
+                raise RagGenerationError(
+                    "Language model tool response did not include cited_indices"
+                )
+            cited_indices: list[int] = []
+            for item in indices:
+                if isinstance(item, bool):
+                    continue
+                if isinstance(item, int):
+                    cited_indices.append(item)
+                elif isinstance(item, float) and item.is_integer():
+                    cited_indices.append(int(item))
+            return answer, cited_indices
+        raise RagGenerationError(
+            "Language model did not return a submit_answer tool_use block"
+        )
 
     @staticmethod
     def _format_context(chunks: list[BiblicalChunk]) -> str:
