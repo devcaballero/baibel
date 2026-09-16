@@ -337,6 +337,13 @@ svg.icon use[href="#icn-facebook"] {
   gap: 1rem;
 }
 
+.result-scope {
+  margin: -0.35rem 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 /* Cards */
 .card {
   border-radius: 12px;

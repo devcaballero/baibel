@@ -4,8 +4,24 @@ import { AnswerCard } from "../components/AnswerCard";
 import { CitationList } from "../components/CitationList";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { QuestionCard } from "../components/QuestionCard";
+import { TESTAMENTS } from "../data/books";
 import { ensureBibliaCatolica } from "../utils/biblia";
 import { SearchForm } from "../components/SearchForm";
+
+function searchScopeLabel(testament, book) {
+  const parts = [];
+  if (testament) {
+    const match = TESTAMENTS.find((item) => item.value === testament);
+    parts.push(match?.label ?? testament);
+  }
+  if (book) {
+    parts.push(book);
+  }
+  if (parts.length === 0) {
+    return null;
+  }
+  return `Buscando en: ${parts.join(" · ")}`;
+}
 
 export function HomePage() {
   const [question, setQuestion] = useState("");
@@ -35,13 +51,21 @@ export function HomePage() {
         testament: testament || undefined,
         book: book || undefined,
       });
-      setResult(data);
+      setResult({
+        ...data,
+        appliedTestament: testament,
+        appliedBook: book,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al consultar");
     } finally {
       setLoading(false);
     }
   }, [testament, book]);
+
+  const resultScope = result
+    ? searchScopeLabel(result.appliedTestament, result.appliedBook)
+    : null;
 
   return (
     <main className="page">
@@ -70,6 +94,7 @@ export function HomePage() {
       {result && !loading && (
         <div className="results">
           <QuestionCard question={question} />
+          {resultScope ? <p className="result-scope">{resultScope}</p> : null}
           <AnswerCard question={question} answer={result.answer} />
           <CitationList key={question} citations={result.citations} />
         </div>
